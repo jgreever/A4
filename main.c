@@ -59,6 +59,8 @@ typedef struct userArguments {
 } userArguments;
 
 /* functions or function declarations */
+void strrev(char *string);
+
 /* Add arguments and print result */
 void
 addition(userArguments toAdd) {
@@ -128,7 +130,9 @@ modulo(userArguments toModulo) {
 
 /* take the users input and print out in reverse */
 void
-reverseInput(userArguments toReverse) {} /* this may need to be a char *ptr instead */
+reverseInput(userArguments toReverse) {
+
+}
 
 /* Function Dispatch Table */
 
