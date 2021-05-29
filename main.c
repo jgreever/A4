@@ -129,9 +129,9 @@ modulo(userArguments toModulo) {
 }
 
 /* take the users input and print out in reverse */
-void
+char *
 reverseInput(userArguments toReverse) {
-
+    printf("Reverse: "); /* TODO: Finish reverse function */
 }
 
 /* Function Dispatch Table */
@@ -161,6 +161,7 @@ main(int argc, char *argv[]) {
     char *choices[8] = { "Exit","Addition","Subtraction","Multiplication","Division","Modulo","Reverse Input" };
     userArguments ua;
     ua.totalArguments = (argc - 1);
+    int idx = 0;
 
     /* If there are more than 15 arguments, set args equal to 15 so we can ignore any more arguments past that */
     /* If there are less than 3 arguments (program name included), then fail */
@@ -174,6 +175,11 @@ main(int argc, char *argv[]) {
     /* let's get the arguments passed in and store them for use later */
     for (int i = 0; i < ua.totalArguments; i++) {
         ua.usersInputValues[i] = (long *) strtol(argv[i + 1], NULL, 0);
+    }
+
+    while (idx < argc) {
+        ua.usersInputStrings[idx] = argv[idx];
+        idx++;
     }
 
     testAllFunctions(ua);
