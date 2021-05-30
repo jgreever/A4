@@ -51,15 +51,52 @@
 
 #define MAXINPUT 15 /* set the max number of arguments we will use */
 
+
+
+
 /* Structs */
-typedef struct userArguments {
-    int totalArguments;
-    long *usersInputValues[MAXINPUT];
+typedef struct {
+    int totalArguments; /* the total arguments the user passed in */
+    long *usersInputValues[MAXINPUT]; /* used to store *argv[] arguments as decimal */
     char *usersInputStrings[MAXINPUT]; /* used to store *argv[] arguments as strings */
 } userArguments;
 
+/* Typedefs for fdt */
+typedef void fdtMenu(userArguments *toRun);
+
+typedef struct {
+    int numberOfMenuItems;
+    char *textOfMenuItems[MAXINPUT];
+} menuOptions;
+
+typedef struct {
+    fdtMenu *runMenuItem;
+} fdtOptions;
+
+
+
+
 /* functions or function declarations */
-void strrev(char *string);
+void exitProgram(userArguments toExit);
+void addition(userArguments toAdd);
+void subtraction(userArguments toSubtract);
+void multiplication(userArguments toMultiply);
+void division(userArguments toDivide);
+void modulo(userArguments toModulo);
+void reverseInput(userArguments toReverse);
+
+
+
+
+/* let's us exit the program from the menu */
+void
+exitProgram(userArguments toExit) {
+    printf("Normally, the program would exit here. This is for testing.\n");
+    //exit(EXIT_SUCCESS);
+}
+
+
+
 
 /* Add arguments and print result */
 void
@@ -76,6 +113,9 @@ addition(userArguments toAdd) {
     }
 }
 
+
+
+
 /* Subtract arguments and print result */
 void
 subtraction(userArguments toSubtract) {
@@ -90,6 +130,9 @@ subtraction(userArguments toSubtract) {
             printf(" = %ld\n", additionResults);
     }
 }
+
+
+
 
 /* Multiply arguments and print result */
 void
@@ -106,6 +149,9 @@ multiplication(userArguments toMultiply) {
     }
 }
 
+
+
+
 /* Divide first two arguments, ignore the rest, and print result */
 void
 division(userArguments toDivide) {
@@ -114,6 +160,9 @@ division(userArguments toDivide) {
     float divideTotal = (float)argOne / (float)argTwo;
     printf("%ld / %ld = %lf\n", (long)toDivide.usersInputValues[0], (long)toDivide.usersInputValues[1], divideTotal);
 }
+
+
+
 
 /* Modulo first two arguments, ignore the rest, and print result */
 void
@@ -128,40 +177,66 @@ modulo(userArguments toModulo) {
     }
 }
 
+
+
+
 /* take the users input and print out in reverse */
-char *
+void
 reverseInput(userArguments toReverse) {
     printf("Reverse: "); /* TODO: Finish reverse function */
 }
 
-/* Function Dispatch Table */
 
 
-/* DEBUGGING FUNCTIONS */
+
+/* prints our menu */
 void
-testAllFunctions(userArguments ua) {
-    printf("\nDEBUGGING USE:\n");
-    printf("User Input Variables: ");
-    for (int j = 0; j < ua.totalArguments; j++)
-        printf("[%ld] ", (long)ua.usersInputValues[j]);
+printMenu(menuOptions menu) {
     printf("\n");
-    addition(ua);
-    subtraction(ua);
-    multiplication(ua);
-    division(ua);
-    modulo(ua);
-    reverseInput(ua);
+    for (int i = 0; i < menu.numberOfMenuItems; i++) {
+        printf("%d)\t%s\n", i, menu.textOfMenuItems[i]);
+    }
     printf("\n");
+    printf("Enter choice: ");
 }
+
+
+
+
+/* Function Dispatch Table */
+fdtOptions fdt[] = {
+        (void (*)(userArguments *)) exitProgram,
+        (void (*)(userArguments *)) addition,
+        (void (*)(userArguments *)) subtraction,
+        (void (*)(userArguments *)) multiplication,
+        (void (*)(userArguments *)) division,
+        (void (*)(userArguments *)) modulo,
+        (void (*)(userArguments *)) reverseInput
+};
+
+
+
+
 
 /* our main function */
 int
 main(int argc, char *argv[]) {
     /* Variables */
-    char *choices[8] = { "Exit","Addition","Subtraction","Multiplication","Division","Modulo","Reverse Input" };
+    char *menuChoices[] = {
+            "Exit",
+            "Addition",
+            "Subtraction",
+            "Multiplication",
+            "Division",
+            "Modulo",
+            "Reverse Input"
+    };
+    int menuCount = sizeof(menuChoices) / sizeof(menuChoices[0]);
+    menuOptions menu;
     userArguments ua;
     ua.totalArguments = (argc - 1);
     int idx = 0;
+    int choice = 0;
 
     /* If there are more than 15 arguments, set args equal to 15 so we can ignore any more arguments past that */
     /* If there are less than 3 arguments (program name included), then fail */
@@ -182,7 +257,15 @@ main(int argc, char *argv[]) {
         idx++;
     }
 
-    testAllFunctions(ua);
+    menu.numberOfMenuItems = menuCount;
+    for (int i = 0; i < menu.numberOfMenuItems; i++) {
+        menu.textOfMenuItems[i] = menuChoices[i];
+    }
+
+    printMenu(menu);
+    choice = getchar();
+
+    (*fdt[choice].runMenuItem)((userArguments *) menuChoices[choice]);
 
     exit(EXIT_SUCCESS);
 }
