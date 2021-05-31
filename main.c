@@ -200,6 +200,7 @@ reverseInput(userArguments toReverse) {
         end--;
     }
     printf("%s", temp);
+    printf("\n");
 }
 
 
