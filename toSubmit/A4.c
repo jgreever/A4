@@ -114,8 +114,9 @@ addition(userArguments toAdd) {
 void
 subtraction(userArguments toSubtract) {
     int totalArgs = toSubtract.totalArguments;
-    long additionResults = 0;
-    for (int i = 0; i < totalArgs; i++) {
+    long additionResults = (long) toSubtract.usersInputValues[0];
+    printf("%ld - ", (long)toSubtract.usersInputValues[0]);
+    for (int i = 1; i < totalArgs; i++) {
         additionResults -= (long)toSubtract.usersInputValues[i];
         printf("%ld", (long)toSubtract.usersInputValues[i]);
         if (i != totalArgs - 1)
@@ -185,7 +186,7 @@ reverseInput(userArguments toReverse) {
 
     strcpy(temp, toReverse.usersInputStrings[1]);
     strcat(temp, " ");
-    for (int i = 2; i <= 14; i++) {
+    for (int i = 2; i <= toReverse.totalArguments; i++) {
         strcat(temp, toReverse.usersInputStrings[i]);
         strcat(temp, " ");
     }
