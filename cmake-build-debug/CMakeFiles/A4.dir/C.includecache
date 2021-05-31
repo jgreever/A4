@@ -6,25 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/tmp/tmp.Md28NrPud2/main.c
+/home/luser/Development/git/A4/main.c
 stdio.h
--
-stdint.h
--
-math.h
--
-string.h
 -
 stdlib.h
 -
-unistd.h
--
-stdarg.h
--
-stddef.h
--
-error.h
--
-inttypes.h
+string.h
 -
 
