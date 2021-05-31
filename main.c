@@ -43,11 +43,8 @@
  */
 
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <stdarg.h>
 
 #define MAXINPUT 15 /* set the max number of arguments we will use */
 
@@ -62,16 +59,12 @@ typedef struct {
 } userArguments;
 
 /* Typedefs for fdt */
-typedef void fdtMenu(userArguments *toRun);
+typedef void fdtMenu(userArguments toRun);
 
 typedef struct {
     int numberOfMenuItems;
     char *textOfMenuItems[MAXINPUT];
 } menuOptions;
-
-typedef struct {
-    fdtMenu *runMenuItem;
-} fdtOptions;
 
 
 
@@ -87,12 +80,13 @@ void reverseInput(userArguments toReverse);
 
 
 
-
 /* let's us exit the program from the menu */
 void
 exitProgram(userArguments toExit) {
-    printf("Normally, the program would exit here. This is for testing.\n");
-    //exit(EXIT_SUCCESS);
+    if (toExit.totalArguments) {
+        printf("Thank you for testing A4!\n");
+    }
+    exit(EXIT_SUCCESS);
 }
 
 
@@ -183,7 +177,28 @@ modulo(userArguments toModulo) {
 /* take the users input and print out in reverse */
 void
 reverseInput(userArguments toReverse) {
-    printf("Reverse: "); /* TODO: Finish reverse function */
+    char temp[100];
+    char charTemp;
+    int len;
+    int start = 0, end;
+
+
+    strcpy(temp, toReverse.usersInputStrings[1]);
+    strcat(temp, " ");
+    for (int i = 2; i <= toReverse.totalArguments; i++) {
+        strcat(temp, toReverse.usersInputStrings[i]);
+        strcat(temp, " ");
+    }
+    printf("Reverse: ");
+    len = (int)strlen(temp);
+    end = len - 1;
+    for (int idx = start; idx < end; idx++) {
+        charTemp = temp[idx];
+        temp[idx] = temp[end];
+        temp[end] = charTemp;
+        end--;
+    }
+    printf("%s", temp);
 }
 
 
@@ -199,21 +214,6 @@ printMenu(menuOptions menu) {
     printf("\n");
     printf("Enter choice: ");
 }
-
-
-
-
-/* Function Dispatch Table */
-fdtOptions fdt[] = {
-        (void (*)(userArguments *)) exitProgram,
-        (void (*)(userArguments *)) addition,
-        (void (*)(userArguments *)) subtraction,
-        (void (*)(userArguments *)) multiplication,
-        (void (*)(userArguments *)) division,
-        (void (*)(userArguments *)) modulo,
-        (void (*)(userArguments *)) reverseInput
-};
-
 
 
 
@@ -236,7 +236,19 @@ main(int argc, char *argv[]) {
     userArguments ua;
     ua.totalArguments = (argc - 1);
     int idx = 0;
-    int choice = 0;
+    int choice;
+    int bool = 0;
+
+    /* Function Dispatch Table */
+    fdtMenu *fdt[] = {
+            exitProgram,
+            addition,
+            subtraction,
+            multiplication,
+            division,
+            modulo,
+            reverseInput
+    };
 
     /* If there are more than 15 arguments, set args equal to 15 so we can ignore any more arguments past that */
     /* If there are less than 3 arguments (program name included), then fail */
@@ -262,10 +274,18 @@ main(int argc, char *argv[]) {
         menu.textOfMenuItems[i] = menuChoices[i];
     }
 
-    printMenu(menu);
-    choice = getchar();
+    while (bool == 0) {
+        printMenu(menu);
+        scanf("%d", &choice);
+        if (choice > 6 || choice < 0) {
+            printf("Invalid choice. Try again.\n");
+            bool = 0;
+        } else
+            fdt[choice](ua);
+        if (choice == 0)
+            bool = 1;
+    }
 
-    (*fdt[choice].runMenuItem)((userArguments *) menuChoices[choice]);
 
     exit(EXIT_SUCCESS);
 }
